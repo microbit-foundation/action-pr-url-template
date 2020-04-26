@@ -1,3 +1,5 @@
+![build-test](https://github.com/microbit-foundation/action-pr-url-template/workflows/build-test/badge.svg)
+
 # Comment on PR open with a templated URL
 
 ## Code in Master

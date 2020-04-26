@@ -1,27 +1,78 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
+jest.mock("@actions/github");
+jest.mock("@actions/core");
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
-})
+import { run } from "../src/action";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
+import { mocked } from "ts-jest/utils";
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
-})
+describe("action", () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = '500'
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execSync(`node ${ip}`, options).toString())
-})
+  it("error if not a PR event", async () => {
+    await run();
+
+    expect(core.setFailed).toBeCalledWith("Expected to run on PR events only.");
+  });
+
+  it("no action if ref is not a branch", async () => {
+    withInputsAndContext(
+      { "uri-template": "https://{branch}.example.com" },
+      { ref: "refs/tags/v1", payload: { pull_request: { number: 123 } } }
+    );
+
+    await run();
+
+    expect(core.setFailed).not.toBeCalled();
+  });
+
+  it("fails for invalid URI template", async () => {
+    withInputsAndContext(
+      { "uri-template": "{{{{" },
+      { ref: "refs/heads/master", payload: { pull_request: { number: 123 } } }
+    );
+
+    await run();
+
+    expect(core.setFailed).toBeCalledWith(
+      'Invalid uri-template input: Expected "(", "*", ",", ":", "}", [\\/;:.?&+#] or [a-zA-Z0-9_.%] but "{" found.'
+    );
+  });
+
+  it("comments on PR for branch", async () => {
+    withInputsAndContext(
+      { "uri-template": "https://{branch}.example.com" },
+      { ref: "refs/heads/master", payload: { pull_request: { number: 123 } } }
+    );
+    const createComment = jest.fn();
+    createComment.mockReturnValue({
+      data: { url: "https://example.com/some-issue-url" }
+    });
+    mocked(github.GitHub).mockImplementation(
+      () =>
+        ({
+          issues: {
+            createComment
+          }
+        } as any)
+    );
+
+    await run();
+
+    expect(createComment).toBeCalledWith({
+      issue_number: 123,
+      body: `Preview build will be at https://master.example.com`
+    });
+    expect(core.setFailed).not.toBeCalled();
+  });
+});
+
+const withInputsAndContext = (inputs: Record<string, string>, context: any) => {
+  const githubMock = github as any;
+  githubMock.context = context;
+  mocked(core.getInput).mockImplementation(
+    (param: string, _options?: core.InputOptions) => inputs[param]
+  );
+};

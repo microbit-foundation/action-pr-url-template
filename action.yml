@@ -1,10 +1,11 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'action-pr-url-template'
+description: 'Comments on PRs with a templated URL'
+author: 'Matt Hillsdon <matt.hillsdon@microbit.org>'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  uri-template:
+    description: 'An RFC 6570 URI template expanded with a "branch" variable defined'
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
 runs:
   using: 'node12'
   main: 'dist/index.js'

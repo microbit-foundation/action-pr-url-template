@@ -2011,13 +2011,19 @@ const github = __importStar(__webpack_require__(469));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const uriTemplateInput = core.getInput('uriTemplate');
-            const repoToken = core.getInput('repo-token');
+            const uriTemplateInput = core.getInput("uri-template");
+            const repoToken = core.getInput("repo-token");
             const pr = github.context.payload.pull_request;
             if (!pr) {
                 throw new Error(`Expected to run on PR events only.`);
             }
-            const uriTemplateExpander = uriTemplate.parse(uriTemplateInput);
+            let uriTemplateExpander;
+            try {
+                uriTemplateExpander = uriTemplate.parse(uriTemplateInput);
+            }
+            catch (e) {
+                throw new Error(`Invalid uri-template input: ${e.message}`);
+            }
             const { ref, repo } = github.context;
             const branchRefPrefix = "refs/heads/";
             if (ref.startsWith(branchRefPrefix)) {

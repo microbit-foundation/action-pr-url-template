@@ -14,7 +14,7 @@ To be completed when this has actually been tried for real!
 
 ## Development docs
 
-As per the (TypeScript action)[https://github.com/actions/typescript-action/].
+As per the [TypeScript action](https://github.com/actions/typescript-action/).
 
 ### Code in Master
 

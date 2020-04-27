@@ -2026,21 +2026,16 @@ function run() {
             catch (e) {
                 throw new Error(`Invalid uri-template input: ${e.message}`);
             }
-            const { ref, repo } = github.context;
-            const branchRefPrefix = "refs/heads/";
-            if (ref.startsWith(branchRefPrefix)) {
-                const branch = ref.substring(branchRefPrefix.length);
-                const context = { branch };
-                core.debug(`Expanding ${uriTemplateInput} with context ${JSON.stringify(context)}`);
-                const uri = uriTemplateExpander.expand(context);
-                core.info(`Commenting on #${pr.number} with URL ${uri}`);
-                const octokit = new github.GitHub(repoToken);
-                const response = yield octokit.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: pr.number, body: `Preview build will be at ${uri}` }));
-                core.debug(`Created comment ${response.data.url}`);
-            }
-            else {
-                core.info(`Ref ${ref} is not a branch, skipping.`);
-            }
+            // context.ref is refs/pulls/123 which isn't helpful!
+            const branch = pr.head.ref;
+            const context = { branch };
+            core.debug(`Expanding ${uriTemplateInput} with context ${JSON.stringify(context)}`);
+            const uri = uriTemplateExpander.expand(context);
+            core.info(`Commenting on #${pr.number} with URL ${uri}`);
+            const octokit = new github.GitHub(repoToken);
+            const { repo } = github.context;
+            const response = yield octokit.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: pr.number, body: `Preview build will be at ${uri}` }));
+            core.debug(`Created comment ${response.data.url}`);
         }
         catch (error) {
             core.setFailed(error.message);

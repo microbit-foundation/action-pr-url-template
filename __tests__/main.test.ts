@@ -17,7 +17,7 @@ describe("action", () => {
   it("error if not a PR event", async () => {
     withInputsAndContext(
       { "uri-template": "https://{branch}.example.com" },
-      { ref: "refs/heads/master", payload: { not_a_pull_request: { number: 123 } } }
+      { payload: { not_a_pull_request: { number: 123, head: { ref: "master" } } } }
     );
 
     await run();
@@ -25,21 +25,10 @@ describe("action", () => {
     expect(core.setFailed).toBeCalledWith("Expected to run on PR events only.");
   });
 
-  it("no action if ref is not a branch", async () => {
-    withInputsAndContext(
-      { "uri-template": "https://{branch}.example.com" },
-      { ref: "refs/tags/v1", payload: { pull_request: { number: 123 } } }
-    );
-
-    await run();
-
-    expect(core.setFailed).not.toBeCalled();
-  });
-
   it("fails for invalid URI template", async () => {
     withInputsAndContext(
       { "uri-template": "{{{{" },
-      { ref: "refs/heads/master", payload: { pull_request: { number: 123 } } }
+      { payload: { pull_request: { number: 123, head: { ref: "master" } } } }
     );
 
     await run();
@@ -52,7 +41,7 @@ describe("action", () => {
   it("comments on PR for branch", async () => {
     withInputsAndContext(
       { "uri-template": "https://{branch}.example.com" },
-      { ref: "refs/heads/master", payload: { pull_request: { number: 123 } } }
+      { payload: { pull_request: { number: 123, head: { ref: "master" } } } }
     );
     const createComment = jest.fn();
     createComment.mockReturnValue({

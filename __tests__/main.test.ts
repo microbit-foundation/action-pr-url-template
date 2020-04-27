@@ -15,6 +15,11 @@ describe("action", () => {
   });
 
   it("error if not a PR event", async () => {
+    withInputsAndContext(
+      { "uri-template": "https://{branch}.example.com" },
+      { ref: "refs/heads/master", payload: { not_a_pull_request: { number: 123 } } }
+    );
+
     await run();
 
     expect(core.setFailed).toBeCalledWith("Expected to run on PR events only.");

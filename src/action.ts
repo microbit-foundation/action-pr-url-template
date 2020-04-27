@@ -20,12 +20,16 @@ export async function run(): Promise<void> {
       throw new Error(`Invalid uri-template input: ${e.message}`);
     }
     // context.ref is refs/pulls/123 which isn't helpful!
-    const branch = pr.head.ref;
-    const context = { branch };
-    core.debug(
-      `Expanding ${uriTemplateInput} with context ${JSON.stringify(context)}`
+    // we could make this sanitization configurable if there was a need
+    const branch = pr.head.ref.replace(
+      /[^a-zA-Z0-9]/g,
+      '-'
     );
-    const uri = uriTemplateExpander.expand(context);
+    const variables = { branch };
+    core.debug(
+      `Expanding ${uriTemplateInput} with variables ${JSON.stringify(variables)}`
+    );
+    const uri = uriTemplateExpander.expand(variables);
     core.info(`Commenting on #${pr.number} with URL ${uri}`);
 
     const octokit = new github.GitHub(repoToken);
@@ -33,7 +37,7 @@ export async function run(): Promise<void> {
     const response = await octokit.issues.createComment({
       ...repo,
       issue_number: pr.number,
-      body: `Preview build will be at ${uri}`
+      body: `Preview build will be at\n${uri}`
     });
     core.debug(`Created comment ${response.data.url}`);
   } catch (error) {

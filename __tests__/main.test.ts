@@ -43,28 +43,50 @@ describe("action", () => {
       { "uri-template": "https://{branch}.example.com" },
       { payload: { pull_request: { number: 123, head: { ref: "master" } } } }
     );
-    const createComment = jest.fn();
-    createComment.mockReturnValue({
-      data: { url: "https://example.com/some-issue-url" }
-    });
-    mocked(github.GitHub).mockImplementation(
-      () =>
-        ({
-          issues: {
-            createComment
-          }
-        } as any)
-    );
+    const createComment = mockedCreateCommentApi();
 
     await run();
 
     expect(createComment).toBeCalledWith({
       issue_number: 123,
-      body: `Preview build will be at https://master.example.com`
+      body: `Preview build will be at\nhttps://master.example.com`
     });
     expect(core.setFailed).not.toBeCalled();
   });
+
+  it("sanitises the branch name", async () => {
+    withInputsAndContext(
+      { "uri-template": "https://{branch}.example.com" },
+      { payload: { pull_request: { number: 123, head: { ref: "feature/yak/shaving" } } } }
+    );
+    const createComment = mockedCreateCommentApi();
+
+    await run();
+
+    expect(createComment).toBeCalledWith({
+      issue_number: 123,
+      body: `Preview build will be at\nhttps://feature-yak-shaving.example.com`
+    });
+    expect(core.setFailed).not.toBeCalled();
+  });
+
 });
+
+const mockedCreateCommentApi = () => {
+  const createComment = jest.fn();
+  createComment.mockReturnValue({
+    data: { url: "https://example.com/some-issue-url" }
+  });
+  mocked(github.GitHub).mockImplementation(
+    () =>
+      ({
+        issues: {
+          createComment
+        }
+      } as any)
+  );
+  return createComment;
+}
 
 const withInputsAndContext = (inputs: Record<string, string>, context: any) => {
   const githubMock = github as any;

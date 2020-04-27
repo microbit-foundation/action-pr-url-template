@@ -10,10 +10,6 @@ import * as github from "@actions/github";
 import { mocked } from "ts-jest/utils";
 
 describe("action", () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
   it("error if not a PR event", async () => {
     await run();
 

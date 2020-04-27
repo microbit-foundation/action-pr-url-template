@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// (c) 2020 Micro:bit Educational Foundation and contributors
+
 jest.mock("@actions/github");
 jest.mock("@actions/core");
 

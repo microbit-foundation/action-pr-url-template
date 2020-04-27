@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// (c) 2020 Micro:bit Educational Foundation and contributors
+
 import * as core from "@actions/core";
 import * as uriTemplate from "uri-template";
 import * as github from "@actions/github";

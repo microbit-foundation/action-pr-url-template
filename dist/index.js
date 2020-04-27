@@ -1988,6 +1988,8 @@ module.exports = windowsRelease;
 
 "use strict";
 
+// SPDX-License-Identifier: MIT
+// (c) 2020 Micro:bit Educational Foundation and contributors
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -3566,6 +3568,8 @@ function checkMode (stat, options) {
 
 "use strict";
 
+// SPDX-License-Identifier: MIT
+// (c) 2020 Micro:bit Educational Foundation and contributors
 Object.defineProperty(exports, "__esModule", { value: true });
 const action_1 = __webpack_require__(76);
 action_1.run();

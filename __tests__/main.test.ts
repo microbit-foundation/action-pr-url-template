@@ -17,7 +17,11 @@ describe("action", () => {
   it("error if not a PR event", async () => {
     withInputsAndContext(
       { "uri-template": "https://{branch}.example.com" },
-      { payload: { not_a_pull_request: { number: 123, head: { ref: "master" } } } }
+      {
+        payload: {
+          not_a_pull_request: { number: 123, head: { ref: "master" } }
+        }
+      }
     );
 
     await run();
@@ -57,7 +61,11 @@ describe("action", () => {
   it("sanitises the branch name", async () => {
     withInputsAndContext(
       { "uri-template": "https://{branch}.example.com" },
-      { payload: { pull_request: { number: 123, head: { ref: "feature/yak/shaving" } } } }
+      {
+        payload: {
+          pull_request: { number: 123, head: { ref: "feature/yak/shaving" } }
+        }
+      }
     );
     const createComment = mockedCreateCommentApi();
 
@@ -69,7 +77,6 @@ describe("action", () => {
     });
     expect(core.setFailed).not.toBeCalled();
   });
-
 });
 
 const mockedCreateCommentApi = () => {
@@ -86,7 +93,7 @@ const mockedCreateCommentApi = () => {
       } as any)
   );
   return createComment;
-}
+};
 
 const withInputsAndContext = (inputs: Record<string, string>, context: any) => {
   const githubMock = github as any;

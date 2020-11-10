@@ -21,19 +21,18 @@ export async function run(): Promise<void> {
     }
     // context.ref is refs/pulls/123 which isn't helpful!
     // we could make this sanitization configurable if there was a need
-    const branch = pr.head.ref.replace(
-      /[^a-zA-Z0-9]/g,
-      '-'
-    );
-    const variables = { branch };
+    const branch = pr.head.ref.replace(/[^a-zA-Z0-9]/g, "-");
+    const variables = {branch};
     core.debug(
-      `Expanding ${uriTemplateInput} with variables ${JSON.stringify(variables)}`
+      `Expanding ${uriTemplateInput} with variables ${JSON.stringify(
+        variables
+      )}`
     );
     const uri = uriTemplateExpander.expand(variables);
     core.info(`Commenting on #${pr.number} with URL ${uri}`);
 
     const octokit = new github.GitHub(repoToken);
-    const { repo } = github.context;
+    const {repo} = github.context;
     const response = await octokit.issues.createComment({
       ...repo,
       issue_number: pr.number,

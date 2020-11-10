@@ -4,10 +4,10 @@
 jest.mock("@actions/github");
 jest.mock("@actions/core");
 
-import { run } from "../src/action";
+import {run} from "../src/action";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { mocked } from "ts-jest/utils";
+import {mocked} from "ts-jest/utils";
 
 describe("action", () => {
   afterEach(() => {
@@ -16,10 +16,10 @@ describe("action", () => {
 
   it("error if not a PR event", async () => {
     withInputsAndContext(
-      { "uri-template": "https://{branch}.example.com" },
+      {"uri-template": "https://{branch}.example.com"},
       {
         payload: {
-          not_a_pull_request: { number: 123, head: { ref: "master" } }
+          not_a_pull_request: {number: 123, head: {ref: "master"}}
         }
       }
     );
@@ -31,8 +31,8 @@ describe("action", () => {
 
   it("fails for invalid URI template", async () => {
     withInputsAndContext(
-      { "uri-template": "{{{{" },
-      { payload: { pull_request: { number: 123, head: { ref: "master" } } } }
+      {"uri-template": "{{{{"},
+      {payload: {pull_request: {number: 123, head: {ref: "master"}}}}
     );
 
     await run();
@@ -44,8 +44,8 @@ describe("action", () => {
 
   it("comments on PR for branch", async () => {
     withInputsAndContext(
-      { "uri-template": "https://{branch}.example.com" },
-      { payload: { pull_request: { number: 123, head: { ref: "master" } } } }
+      {"uri-template": "https://{branch}.example.com"},
+      {payload: {pull_request: {number: 123, head: {ref: "master"}}}}
     );
     const createComment = mockedCreateCommentApi();
 
@@ -60,10 +60,10 @@ describe("action", () => {
 
   it("sanitises the branch name", async () => {
     withInputsAndContext(
-      { "uri-template": "https://{branch}.example.com" },
+      {"uri-template": "https://{branch}.example.com"},
       {
         payload: {
-          pull_request: { number: 123, head: { ref: "feature/yak/shaving" } }
+          pull_request: {number: 123, head: {ref: "feature/yak/shaving"}}
         }
       }
     );
@@ -82,7 +82,7 @@ describe("action", () => {
 const mockedCreateCommentApi = () => {
   const createComment = jest.fn();
   createComment.mockReturnValue({
-    data: { url: "https://example.com/some-issue-url" }
+    data: {url: "https://example.com/some-issue-url"}
   });
   mocked(github.GitHub).mockImplementation(
     () =>

@@ -2,6 +2,12 @@
 
 # Comment on a PR when it's opened with a templated URL
 
+## Project status
+
+The Micro:bit Educational Foundation maintain this for internal use but are not able to commit significant time to extending it beyond our usecase. It's open source in the hope that it will be useful to the GitHub community.
+
+## Introduction
+
 Useful when some other CI system deploys a build to URLs that include the 
 branch name but doesn't integrate with GitHub sufficiently to update the 
 pull request.

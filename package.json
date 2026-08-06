@@ -4,6 +4,13 @@
   "private": true,
   "description": "GitHub action to comment on a PR with an templated URL",
   "main": "lib/main.js",
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.18.0"
+  },
+  "allowScripts": {
+    "fsevents": true
+  },
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts",

@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: MIT
 // (c) 2020 Micro:bit Educational Foundation and contributors
 
-jest.mock("@actions/github");
+// An explicit factory rather than an automock: automocking has to load the real
+// module to read its exports, which pulls in undici via @actions/http-client.
+jest.mock("@actions/github", () => ({
+  context: {},
+  getOctokit: jest.fn()
+}));
 jest.mock("@actions/core");
 
 import {run} from "../src/action";
@@ -84,11 +89,13 @@ const mockedCreateCommentApi = () => {
   createComment.mockReturnValue({
     data: {url: "https://example.com/some-issue-url"}
   });
-  mocked(github.GitHub).mockImplementation(
+  mocked(github.getOctokit).mockImplementation(
     () =>
       ({
-        issues: {
-          createComment
+        rest: {
+          issues: {
+            createComment
+          }
         }
       } as any)
   );

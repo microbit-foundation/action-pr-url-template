@@ -33,12 +33,8 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@actions/github": "^2.2.0",
+    "@actions/github": "^6.0.0",
     "uri-template": "^1.0.1"
-  },
-  "_overridesComment": "universal-user-agent@4 pulls os-name/macos-release, whose hardcoded Darwin version map predates macOS 26 and throws on import. v6 drops that dependency entirely. Remove this override once @actions/github is upgraded past v2.",
-  "overrides": {
-    "universal-user-agent": "^6.0.1"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",
@@ -53,6 +49,6 @@
     "js-yaml": "^3.14.0",
     "prettier": "^1.19.1",
     "ts-jest": "^26.4.4",
-    "typescript": "^3.9.7"
+    "typescript": "^4.9.5"
   }
 }

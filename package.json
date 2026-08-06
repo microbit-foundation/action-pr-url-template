@@ -16,7 +16,7 @@
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
-    "pack": "ncc build",
+    "pack": "ncc build lib/main.js -o dist",
     "test": "jest",
     "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
   },
@@ -36,11 +36,15 @@
     "@actions/github": "^2.2.0",
     "uri-template": "^1.0.1"
   },
+  "_overridesComment": "universal-user-agent@4 pulls os-name/macos-release, whose hardcoded Darwin version map predates macOS 26 and throws on import. v6 drops that dependency entirely. Remove this override once @actions/github is upgraded past v2.",
+  "overrides": {
+    "universal-user-agent": "^6.0.1"
+  },
   "devDependencies": {
     "@types/jest": "^24.9.1",
     "@types/node": "^12.19.4",
     "@typescript-eslint/parser": "^2.34.0",
-    "@zeit/ncc": "^0.20.5",
+    "@vercel/ncc": "^0.38.3",
     "eslint": "^5.16.0",
     "eslint-plugin-github": "^4.1.1",
     "eslint-plugin-jest": "^22.21.0",

@@ -3,11 +3,6 @@
 
 const tseslint = require("typescript-eslint");
 
-// The plugin and parser are wired up explicitly rather than by extending one of
-// typescript-eslint's presets, so the rules enforced here stay the same set we
-// enforced under eslint 8. recommendedTypeChecked in particular would add the
-// no-unsafe-* rules, which fire throughout action.ts because uri-template has
-// no types (see misc.d.ts) and github.context.payload is loosely typed.
 module.exports = tseslint.config({
   ignores: ["dist/", "lib/", "node_modules/"]
 }, {

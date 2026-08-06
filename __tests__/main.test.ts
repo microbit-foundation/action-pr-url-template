@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
 // (c) 2020 Micro:bit Educational Foundation and contributors
 
-// An explicit factory rather than an automock: automocking has to load the real
-// module to read its exports, which pulls in undici via @actions/http-client.
-// __esModule is required: without it esModuleInterop's __importStar rebuilds the
-// namespace object with getter-only bindings, so tests cannot assign to context.
 jest.mock("@actions/github", () => ({
   __esModule: true,
   context: {},

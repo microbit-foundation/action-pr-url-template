@@ -39,6 +39,10 @@ As per the [TypeScript action](https://github.com/actions/typescript-action/).
 
 ### Code in Master
 
+Requires Node 24 or later and npm 11.18 or later. These are enforced via
+`engine-strict` in `.npmrc`, because the package installation protections we
+rely on there are silently ignored by older npm.
+
 Install the dependencies
 
 ```bash
@@ -68,7 +72,7 @@ $ npm test
 
 Actions are run from GitHub repos so we will checkin the packed dist folder.
 
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
+Then run [ncc](https://github.com/vercel/ncc) and push the results:
 
 ```bash
 $ npm run pack

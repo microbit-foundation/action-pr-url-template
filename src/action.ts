@@ -17,7 +17,8 @@ export async function run(): Promise<void> {
     try {
       uriTemplateExpander = uriTemplate.parse(uriTemplateInput);
     } catch (e) {
-      throw new Error(`Invalid uri-template input: ${e.message}`);
+      const message = e instanceof Error ? e.message : String(e);
+      throw new Error(`Invalid uri-template input: ${message}`);
     }
     // context.ref is refs/pulls/123 which isn't helpful!
     // we could make this sanitization configurable if there was a need
@@ -31,15 +32,15 @@ export async function run(): Promise<void> {
     const uri = uriTemplateExpander.expand(variables);
     core.info(`Commenting on #${pr.number} with URL ${uri}`);
 
-    const octokit = new github.GitHub(repoToken);
+    const octokit = github.getOctokit(repoToken);
     const {repo} = github.context;
-    const response = await octokit.issues.createComment({
+    const response = await octokit.rest.issues.createComment({
       ...repo,
       issue_number: pr.number,
       body: `Preview build will be at\n${uri}`
     });
     core.debug(`Created comment ${response.data.url}`);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error instanceof Error ? error.message : String(error));
   }
 }

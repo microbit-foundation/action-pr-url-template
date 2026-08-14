@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
 // (c) 2020 Micro:bit Educational Foundation and contributors
 
-jest.mock("@actions/github");
+jest.mock("@actions/github", () => ({
+  __esModule: true,
+  context: {},
+  getOctokit: jest.fn()
+}));
 jest.mock("@actions/core");
 
 import {run} from "../src/action";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import {mocked} from "ts-jest/utils";
 
 describe("action", () => {
   afterEach(() => {
@@ -38,7 +41,7 @@ describe("action", () => {
     await run();
 
     expect(core.setFailed).toBeCalledWith(
-      'Invalid uri-template input: Expected "(", "*", ",", ":", "}", [\\/;:.?&+#] or [a-zA-Z0-9_.%] but "{" found.'
+      expect.stringMatching(/^Invalid uri-template input: /)
     );
   });
 
@@ -84,11 +87,13 @@ const mockedCreateCommentApi = () => {
   createComment.mockReturnValue({
     data: {url: "https://example.com/some-issue-url"}
   });
-  mocked(github.GitHub).mockImplementation(
+  jest.mocked(github.getOctokit).mockImplementation(
     () =>
       ({
-        issues: {
-          createComment
+        rest: {
+          issues: {
+            createComment
+          }
         }
       } as any)
   );
@@ -98,7 +103,9 @@ const mockedCreateCommentApi = () => {
 const withInputsAndContext = (inputs: Record<string, string>, context: any) => {
   const githubMock = github as any;
   githubMock.context = context;
-  mocked(core.getInput).mockImplementation(
-    (param: string, _options?: core.InputOptions) => inputs[param]
-  );
+  jest
+    .mocked(core.getInput)
+    .mockImplementation(
+      (param: string, _options?: core.InputOptions) => inputs[param]
+    );
 };

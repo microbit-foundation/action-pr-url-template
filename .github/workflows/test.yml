@@ -13,7 +13,11 @@ jobs:
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+    - run: npm install -g npm@11 --registry=https://registry.npmjs.org
     - run: |
         npm install
         npm run all
